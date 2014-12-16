@@ -1,0 +1,11 @@
+#gameDiv{
+  margin-left: 235px;
+  margin-top: 40px;
+  /*border: 1px solid red;*/
+}
+
+body{
+  background-image: url('/assets/img/wood_1.png');
+  background-size: 100% 100%;
+  /*background-repeat; no-repeat;*/
+}
