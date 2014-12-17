@@ -1,3 +1,6 @@
+@import url(http://fonts.googleapis.com/css?family=Creepster);
+@import url(http://fonts.googleapis.com/css?family=Lato:300italic);
+
 #gameDiv{
   margin-left: 235px;
   margin-top: 40px;
@@ -8,4 +11,39 @@ body{
   background-image: url('/assets/img/wood_1.png');
   background-size: 100% 100%;
   /*background-repeat; no-repeat;*/
+}
+
+.header1{
+  position: absolute;
+  font-family: 'Creepster', cursive;
+  font-size: 80px;
+  color: white;
+  margin-left: 30px;
+}
+
+.theKnowHow{
+  position: absolute;
+  margin-top: -600px;
+  margin-left: 1060px;
+  color: white;
+  font-family: 'Creepster', cursive;
+  -webkit-animation-delay: 1s;
+  /*float: right;*/
+}
+
+.container{
+  position: absolute;
+  margin-top: -570px;
+  margin-left: 1060px;
+  color: white;
+  -webkit-animation-delay: 1.5s;
+}
+
+.SpanKH{
+  color: cyan;
+  font-family: 'Creepster', cursive;
+}
+
+p{
+  font-family: 'Lato', sans-serif;
 }

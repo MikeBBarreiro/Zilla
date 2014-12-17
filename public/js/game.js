@@ -3,16 +3,21 @@ var level = (function(){
 
     preload: preload,
     create: create,
-    update: update
+    update: update,
+    render: render
   };
 
   // var platforms, music;
-  var player, layer, map, cursors;
+  var player, layer, map, cursors, level1Music;
 
   function preload(){
     game.load.tilemap('Zilla', '/assets/tilemaps/maps/ninja-tilemap.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('kenney', '/assets/tilemaps/tiles/kenney.png');
-    game.load.spritesheet('Godzilla', '/assets/img/slice01_01_5x40.png', 197, 82);
+    game.load.spritesheet('Godzilla', '/assets/img/slice01_01_7x29.png', 141, 82);
+
+    //Audio
+
+
     // game.load.image('ground', '/assets/ground.png');
     // game.load.image('sky', '/assets/sky.png');
     // //load jump sound effect
@@ -35,32 +40,37 @@ var level = (function(){
     cursors = game.input.keyboard.createCursorKeys();
 
     //Map Collision is activated here
-    map.setCollisionBetween(38, 60);
-    map.setCollisionBetween(99, 120);
+    map.setCollisionBetween(37, 61);
+    map.setCollisionBetween(98, 121);
     // map.setCollisionBetween(27, 28);
-    // map.setCollision(19);
+    map.setCollision(142);
+
+    layer.debug = true
 
 
-
-    player = game.add.sprite(32, 232, 'Godzilla');
+    player = game.add.sprite(230, 455, 'Godzilla');
     // game.world.height - 150
     game.physics.arcade.enable(player);
     player.anchor.setTo(0.10, 0.10);
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
+    player.checkWorldBounds = true;
+    player.body.collideWorldBounds = true;
+    game.camera.follow(player);
 
     player.animations.add('right', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     player.animations.add('left', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
-    player.animations.add('stop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
+    // player.animations.add('stop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
 
 
   }
 
 
   function render(){
-    player.debug = true;
-    game.debug.spriteBounds(player);
-    game.debug.spriteCorners(player, true, true);
+    // player.debug = true;
+    game.debug.body(player);
+    // game.debug.spriteBounds(player);
+    // game.debug.spriteCorners(player, true, true);
   }
 
   function update(){
@@ -82,11 +92,16 @@ var level = (function(){
       player.animations.play('right');
     }else{
       //  Stand still
-      // player.animations.stop();
-      player.animations.play('stop');
-      // player.frame = 4;
-      // player.animations.add('stop', [00, 01, 02, 03, 04, 05, 06, 07, 08, 09], false);
+      player.animations.stop();
+      // player.animations.play('stop');
+      player.frame = 4;
     }
+
+    //  Allow the player to jump if they are touching the ground.
+    if (cursors.up.isDown && player.body.onFloor()){
+      player.body.velocity.y = -250;
+    }
+
 
   }
 
