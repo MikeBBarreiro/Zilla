@@ -14,6 +14,7 @@ var level = (function(){
     game.load.tilemap('Zilla', '/assets/tilemaps/maps/ninja-tilemap.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('kenney', '/assets/tilemaps/tiles/kenney.png');
     game.load.spritesheet('Godzilla', '/assets/img/slice01_01_7x29.png', 141, 82);
+    game.load.image('backdrop', '/assets/img/night.png');
 
     //Audio
 
@@ -32,6 +33,12 @@ var level = (function(){
   function create(){
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // game.add.sprite(0, 0, 'backdrop');
+    var backgroundGame = game.add.tileSprite(0, 0, game.world.width, game.world.height, 'backdrop');
+    //give it speed in x
+    backgroundGame.autoScroll(-20, 0);
+
     map = game.add.tilemap('Zilla');
     map.addTilesetImage('kenney');
     layer = map.createLayer('background01');
@@ -45,7 +52,7 @@ var level = (function(){
     // map.setCollisionBetween(27, 28);
     map.setCollision(142);
 
-    layer.debug = true
+    // layer.debug = true
 
 
     player = game.add.sprite(230, 455, 'Godzilla');
@@ -87,9 +94,15 @@ var level = (function(){
     if(cursors.left.isDown){
       player.body.velocity.x = -150;
       player.animations.play('left');
+      player.anchor.setTo(.5, 1); //so it flips around its middle
+      player.scale.x = 1; //facing default direction
+      player.scale.x = -1;
     }else if(cursors.right.isDown){
       player.body.velocity.x = 150;
       player.animations.play('right');
+      player.anchor.setTo(.5, 1); //so it flips around its middle
+      player.scale.x = -1; //facing default direction
+      player.scale.x = 1;
     }else{
       //  Stand still
       player.animations.stop();
