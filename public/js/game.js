@@ -8,7 +8,7 @@ var level = (function(){
   };
 
   // var platforms, music;
-  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar;
+  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar, spaceKey;
 
   function preload(){
     game.load.tilemap('Zilla', '/assets/tilemaps/maps/ninja-tilemap.json', null, Phaser.Tilemap.TILED_JSON);
@@ -16,8 +16,10 @@ var level = (function(){
     game.load.spritesheet('Godzilla', '/assets/img/slice01_01_7x29.png', 141, 81);
     game.load.spritesheet('Boss1','/assets/img/slice01_01_8x10.png', 124, 135);
     game.load.spritesheet('Boss2','/assets/img/slice01_01_8x10.png', 124, 135);
+    game.load.spritesheet('Shooter','/assets/img/other.png', 141, 81);
     game.load.image('backdrop', '/assets/img/night.png');
     game.load.image('fireball', '/assets/img/blueflame.png');
+    game.load.image('blueRay', '/assets/img/blueray.png');
     //Audio
 
     game.load.audio('fireball', '/assets/audio/fireball.wav');
@@ -46,7 +48,8 @@ var level = (function(){
     layer = map.createLayer('background01');
     layer.resizeWorld();
 
-    cursors = game.input.keyboard.createCursorKeys();
+    spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    cursors  = game.input.keyboard.createCursorKeys();
 
     fireBallSound = game.add.audio('fireball', 0.5);
 
@@ -61,7 +64,7 @@ var level = (function(){
 
     player = game.add.sprite(230, 455, 'Godzilla');
     boss1  = game.add.sprite(1000, 100, 'Boss1');
-    boss2  = game.add.sprite(3600, 100, 'Boss2')
+    boss2  = game.add.sprite(3600, 100, 'Boss2');
 
     boss1.scale.x = -1;
     boss2.scale.x = -1;
@@ -97,7 +100,9 @@ var level = (function(){
 
     player.animations.add('right', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     player.animations.add('left', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
-    boss1.animations.add('shoot', [14, 15, 00], 10, false);
+    boss1.animations.add('shoot', [14, 15, 00], 5, false);
+    // player.animations.add('zillaShoot', [157, 158], 5, false);
+    // player.animations.add('Shooter', [3, 4], 5, false);
     // player.animations.add('stop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
 
     // spawnGiant();
@@ -105,19 +110,11 @@ var level = (function(){
     fireballs = game.add.group();
     game.physics.enable(fireballs, Phaser.Physics.ARCADE);
 
+    bluerays = game.add.group();
+    game.physics.enable(bluerays, Phaser.Physics.ARCADE);
+
   }
 
-
-  function render(){
-    // player.debug = true;
-    game.debug.body(player);
-    // game.debug.body(boss1);
-    // game.debug.spriteBounds(player);
-    // game.debug.spriteCorners(player, true, true);
-    for (var i = 0; i < fireballs.length; i++){
-      game.debug.body(fireballs.children[i]);
-    }
-  }
 
   function update(){
     //physics collisions declared here
@@ -126,6 +123,8 @@ var level = (function(){
     game.physics.arcade.collide(boss2, layer);
     game.physics.arcade.collide(fireballs, layer);
     game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    game.physics.arcade.collide(boss1, player, killPlayer, null, this);
+    game.physics.arcade.collide(bluerays, boss1, killBoss1, null, this);
     // game.physics.arcade.overlap(player, layer, killPlayer, null, this);
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
 
@@ -135,18 +134,15 @@ var level = (function(){
       killPlayer();
     }
 
-    if(player.body.y )
-    // pathCounter +=1;
-    // if (pathCounter >= 140){
-    //   pathCounter = 0;
-    // }
-
-    // giantPath();
-
     if (boss1.alive == true){
-
       bossShoots();
     }
+
+    if(spaceKey.isDown){
+      zillaShoots();
+      // player.animations.play('Shooter');
+    }
+
 
     // if (giantHP <= 0 ) {
     //   giant.kill();
@@ -164,6 +160,7 @@ var level = (function(){
     if(cursors.left.isDown){
       player.body.velocity.x = -150;
       player.animations.play('left');
+      player.facing = 'left';
 
       // player.anchor.setTo(.5, 1); //flips around players middle
 
@@ -172,6 +169,7 @@ var level = (function(){
     }else if(cursors.right.isDown){
       player.body.velocity.x = 150;
       player.animations.play('right');
+      player.facing = 'right';
 
       // player.anchor.setTo(.5, 1); //flips around players middle
       // player.scale.x = -1; //facing default direction
@@ -203,39 +201,75 @@ var level = (function(){
         // fireball = fireballs.create(giant.body.x + giant.body.width / 2 - 40, giant.body.y + giant.body.height / 2 + 5, 'fireball');
 
       game.physics.enable(fireball, Phaser.Physics.ARCADE);
-      // fireball.body.setSize(30, 35);
-      // var fireball;
-      // if (facingGiant == 'left') {
-      //   fireball = fireballs.create(giant.body.x + giant.body.width / 2 + 45, giant.body.y + giant.body.height / 2 + 5, 'fireball');
-      // } else {
-      //   fireBallSound.play();
-      //   fireball = fireballs.create(giant.body.x + giant.body.width / 2 - 40, giant.body.y + giant.body.height / 2 + 5, 'fireball');
-      // }
-      // game.physics.enable(fireball, Phaser.Physics.ARCADE);
-      fireball.scale.setTo(0.2, 0.1);
+
       fireball.body.gravity.y = 100;
       fireball.body.bounce.y = 1;
       fireball.body.bounce.x = 1;
       fireball.outOfBoundsKill = true;
       // fireball.anchor.setTo(0.8, 0.9);
       fireball.anchor.setTo(0.5, 0.5);
+      fireball.scale.setTo(0.2,0.1);
       fireball.body.setSize(300,450);
+      // fireball.body.setSize(3,2);
 
       fireball.body.velocity.x = -400;
-      // fireball.body.velocity.x = 0;
-      // if (facingGiant == 'left'){
-      //   fireBallSound.play();
-      //   fireball.body.velocity.x = 200;
-      // } else {
-      //   fireBallSound.play();
-      //   fireball.body.velocity.x = -200;
-    //   }
+
     }
   };
+
+  function zillaShoots(){
+    // spaceKey.onDown.add(start);
+      // shotTimerGiant = game.time.now + 3000;
+      var blueray;
+      if (player.facing == 'right') {
+        blueray = bluerays.create(player.body.x + player.body.width / 2 + 45, player.body.y + 10, 'blueRay');
+      } else {
+        // fireBallSound.play();
+        blueray = bluerays.create(player.body.x + player.body.width / 2 - 40, player.body.y + 10, 'blueRay');
+      }
+      game.physics.enable(blueray, Phaser.Physics.ARCADE);
+      blueray.body.setSize(130, 135);
+      blueray.scale.setTo(0.1,0.05);
+      // blueray.body.gravity.y = 40;
+      // blueray.body.bounce.y = 1;
+      blueray.outOfBoundsKill = true;
+      blueray.anchor.setTo(0.5, 0.5);
+      blueray.body.velocity.x = 0;
+
+      if (player.facing == 'right'){
+        // fireBallSound.play();
+        blueray.body.velocity.x = 400;
+      } else {
+        // fireBallSound.play();
+        blueray.body.velocity.x = -400;
+      }
+  }
 
   function killPlayer(){
     game.state.start('level');
   }
+  function killBoss1(){
+    boss1.kill();
+  }
+  function killBoss2(){
+    boss2.kill();
+  }
+
+  function render(){
+    // player.debug = true;
+    game.debug.body(player);
+    //game.debug.body(boss1);
+
+    // game.debug.spriteBounds(player);
+    // game.debug.spriteCorners(player, true, true);
+    for (var i = 0; i < fireballs.length; i++){
+      game.debug.body(fireballs.children[i]);
+    }
+
+  for (var i = 0; i < bluerays.length; i++){
+    game.debug.body(bluerays.children[i]);
+  }
+}
 
   return o;
 })();

@@ -19,7 +19,7 @@ var menu = (function(){
     button = game.add.button(game.world.centerX - 95, 400, 'button', startClick, this, 2, 1, 0);
 
     level1Music = game.add.audio('level1Music', 1, true);
-    Roar = game.add.audio('awesomeness', 1, false);
+    Roar = game.add.audio('awesomeness', 0.5, false);
 
     Roar.play();
     level1Music.play();
