@@ -8,7 +8,7 @@ var level = (function(){
   };
 
   // var platforms, music;
-  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar, spaceKey;
+  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar, spaceKey, Zillablueray;
 
   function preload(){
     game.load.tilemap('Zilla', '/assets/tilemaps/maps/ninja-tilemap.json', null, Phaser.Tilemap.TILED_JSON);
@@ -23,6 +23,7 @@ var level = (function(){
     //Audio
 
     game.load.audio('fireball', '/assets/audio/fireball.wav');
+    game.load.audio('ZillaRay', '/assets/audio/theshooting2.mp3');
     // game.load.image('ground', '/assets/ground.png');
     // game.load.image('sky', '/assets/sky.png');
     // //load jump sound effect
@@ -52,6 +53,7 @@ var level = (function(){
     cursors  = game.input.keyboard.createCursorKeys();
 
     fireBallSound = game.add.audio('fireball', 0.5);
+    Zillablueray  = game.add.audio('ZillaRay', 0.9);
 
     //Map Collision is activated here
     map.setCollisionBetween(37, 61);
@@ -101,6 +103,7 @@ var level = (function(){
     player.animations.add('right', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     player.animations.add('left', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     boss1.animations.add('shoot', [14, 15, 00], 5, false);
+    boss1.animations.add('hangHead', [79, 80], 2, false);
     // player.animations.add('zillaShoot', [157, 158], 5, false);
     // player.animations.add('Shooter', [3, 4], 5, false);
     // player.animations.add('stop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
@@ -124,7 +127,7 @@ var level = (function(){
     game.physics.arcade.collide(fireballs, layer);
     game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
-    game.physics.arcade.collide(bluerays, boss1, killBoss1, null, this);
+    game.physics.arcade.collide(bluerays, boss1, deadBoss1, null, this);
     // game.physics.arcade.overlap(player, layer, killPlayer, null, this);
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
 
@@ -144,13 +147,12 @@ var level = (function(){
     }
 
 
-    // if (giantHP <= 0 ) {
-    //   giant.kill();
-    //   setTimeout(function() {
-    //     game.state.start('win1');
-    //     level1Music.stop();
-    //   }, 3000);
-    // }
+    if (boss1HP,boss2HP <= 0 ) {
+      boss1.kill();
+      setTimeout(function() {
+        game.state.start('menu');
+      }, 3000);
+    }
   }
 
   function movePlayer(){
@@ -187,11 +189,14 @@ var level = (function(){
     }
   }
 
+  var boss1HP = 200;
+  var boss2HP = 300;
+
   var shotTimerGiant = 0;
   function bossShoots(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 3000;
+      shotTimerGiant = game.time.now + 1000;
       var fireball;
 
       fireball = fireballs.create(boss1.body.x + boss1.body.width / 2 + 45, boss1.body.y + boss1.body.height / 2 + 5, 'fireball');
@@ -222,8 +227,10 @@ var level = (function(){
       // shotTimerGiant = game.time.now + 3000;
       var blueray;
       if (player.facing == 'right') {
+        Zillablueray.play();
         blueray = bluerays.create(player.body.x + player.body.width / 2 + 45, player.body.y + 10, 'blueRay');
       } else {
+        Zillablueray.play();
         // fireBallSound.play();
         blueray = bluerays.create(player.body.x + player.body.width / 2 - 40, player.body.y + 10, 'blueRay');
       }
@@ -236,10 +243,14 @@ var level = (function(){
       blueray.anchor.setTo(0.5, 0.5);
       blueray.body.velocity.x = 0;
 
+      blueray.outOfBoundsKill = true;
+
       if (player.facing == 'right'){
+        Zillablueray.play();
         // fireBallSound.play();
         blueray.body.velocity.x = 400;
       } else {
+        Zillablueray.play();
         // fireBallSound.play();
         blueray.body.velocity.x = -400;
       }
@@ -248,12 +259,28 @@ var level = (function(){
   function killPlayer(){
     game.state.start('level');
   }
-  function killBoss1(){
-    boss1.kill();
+  // function killBoss1(){
+  //   boss1HP -= 210;
+  //   boss1.kill();
+  // }
+
+  function deadBoss1(){
+    boss1HP -= 1;
+    boss1.body.velocity.x = -20;
+    boss1.body.velocity.y = 90;
+    if(boss1HP <= 0){
+      boss1.kill();
+      boss1.animations.play('hangHead');
+    }
+    console.log('BOSS HEALTH====', boss1HP);
   }
-  function killBoss2(){
-    boss2.kill();
-  }
+
+
+  // function killBoss2(){
+  //   boss1HP -= 25;
+  //   boss2.kill();
+  // }
+
 
   function render(){
     // player.debug = true;
