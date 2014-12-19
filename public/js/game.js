@@ -8,7 +8,7 @@ var level = (function(){
   };
 
   // var platforms, music;
-  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar, spaceKey, Zillablueray;
+  var player, layer, map, cursors, level1Music, boundsKill, boss1, fireBallSound, Roar, spaceKey, Zillablueray, emitter1;
 
   function preload(){
     game.load.tilemap('Zilla', '/assets/tilemaps/maps/ninja-tilemap.json', null, Phaser.Tilemap.TILED_JSON);
@@ -20,6 +20,7 @@ var level = (function(){
     game.load.image('backdrop', '/assets/img/night.png');
     game.load.image('fireball', '/assets/img/blueflame.png');
     game.load.image('blueRay', '/assets/img/blueray.png');
+    game.load.image('bossExp', '/assets/particles/fire1.png');
     //Audio
 
     game.load.audio('fireball', '/assets/audio/fireball.wav');
@@ -62,6 +63,9 @@ var level = (function(){
     map.setCollision(142);
 
     // layer.debug = true
+
+    emitter1 = game.add.emitter(0, 0, 100);
+    emitter1.makeParticles('bossExp');
 
 
     player = game.add.sprite(230, 455, 'Godzilla');
@@ -128,6 +132,7 @@ var level = (function(){
     game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
     game.physics.arcade.collide(bluerays, boss1, deadBoss1, null, this);
+    game.physics.arcade.collide(bluerays, emitter1, deadBoss1,null, this);
     // game.physics.arcade.overlap(player, layer, killPlayer, null, this);
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
 
@@ -147,12 +152,12 @@ var level = (function(){
     }
 
 
-    if (boss1HP,boss2HP <= 0 ) {
-      boss1.kill();
-      setTimeout(function() {
-        game.state.start('menu');
-      }, 3000);
-    }
+    // if (boss1HP,boss2HP <= 0 ) {
+    //   boss1.kill();
+    //   setTimeout(function() {
+    //     game.state.start('menu');
+    //   }, 3000);
+    // }
   }
 
   function movePlayer(){
@@ -258,6 +263,7 @@ var level = (function(){
 
   function killPlayer(){
     game.state.start('level');
+    boss1HP = 200;
   }
   // function killBoss1(){
   //   boss1HP -= 210;
@@ -270,7 +276,10 @@ var level = (function(){
     boss1.body.velocity.y = 90;
     if(boss1HP <= 0){
       boss1.kill();
-      boss1.animations.play('hangHead');
+      emitter1.x = boss1.body.x;
+      emitter1.y = boss1.body.y;
+      emitter1.start(true, 1000, null, 1);
+      // boss1.animations.play('hangHead');
     }
     console.log('BOSS HEALTH====', boss1HP);
   }
