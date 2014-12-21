@@ -11,6 +11,7 @@ var level = (function(){
   var map,
       Roar,
       boss1,
+      boss3,
       layer,
       player,
       health0,
@@ -18,6 +19,8 @@ var level = (function(){
       health2,
       GidDead,
       cursors,
+      blueray,
+      bluerays,
       emitter1,
       emitter2,
       fireball,
@@ -69,7 +72,7 @@ var level = (function(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     // game.add.sprite(0, 0, 'backdrop');
-    var backgroundGame = game.add.tileSprite(0, 0, game.world.width +3050, game.world.height +250, 'backdrop');
+    var backgroundGame = game.add.tileSprite(0, 0, game.world.width +3950, game.world.height +250, 'backdrop');
     //give backgound speed in x
     backgroundGame.autoScroll(-20, 0);
 
@@ -103,12 +106,13 @@ var level = (function(){
     player  = game.add.sprite(230, 455, 'Godzilla');
     boss1   = game.add.sprite(1000, 100, 'Boss1');
     boss2   = game.add.sprite(3600, 100, 'Boss2');
-    health0 = game.add.sprite(10, 200, 'health0');
-    health1 = game.add.sprite(40, 200, 'health1');
-    health2 = game.add.sprite(70, 200, 'health2');
-    health3 = game.add.sprite(100, 200, 'health3');
-    health4 = game.add.sprite(130, 200, 'health4');
-    health5 = game.add.sprite(160, 200, 'health5');
+    boss3   = game.add.sprite(4000, 100, 'Boss3');
+    health0 = game.add.sprite(10, 40, 'health0');
+    health1 = game.add.sprite(40, 40, 'health1');
+    health2 = game.add.sprite(70, 40, 'health2');
+    health3 = game.add.sprite(100, 40, 'health3');
+    health4 = game.add.sprite(130, 40, 'health4');
+    health5 = game.add.sprite(160, 40, 'health5');
 
     boss1.scale.x = -1;
     boss2.scale.x = -1;
@@ -116,27 +120,40 @@ var level = (function(){
     game.physics.arcade.enable(player);
     game.physics.arcade.enable(boss1);
     game.physics.arcade.enable(boss2);
+    game.physics.arcade.enable(boss3);
 
     // player.anchor.setTo(0.8, 0.9);
     // player.anchor.setTo(.5, 1);
     player.anchor.setTo(0.5, 0.5);
 
-    player.body.bounce.y = 0.2;
+    player.body.bounce.y  = 0.2;
     player.body.setSize(40,80);
     player.body.gravity.y = 300;
 
-    boss1.body.bounce.y = 0.7;
+    boss1.body.bounce.y  = 0.7;
     boss1.body.gravity.y = 30;
     boss1.body.setSize(40,80);
     boss1.anchor.setTo(0.8, 0.9);
 
-    boss2.body.bounce.y = 0.7;
+    boss2.body.bounce.y  = 0.7;
     boss2.body.gravity.y = 30;
     boss2.body.setSize(40,80);
     boss2.anchor.setTo(0.8, 0.9);
 
+    boss3.body.bounce.y  = 0.1;
+    boss3.body.gravity.y = 30;
+    boss3.body.setSize(40,80);
+    boss3.anchor.setTo(0.8, 0.9);
+
     healthText = game.add.text(10, 5, 'Health: 150', { fontSize: '22px', fill: '#4B6EEF' });
     healthText.fixedToCamera = true  ;
+
+    health0.fixedToCamera = true ;
+    health1.fixedToCamera = true ;
+    health2.fixedToCamera = true ;
+    health3.fixedToCamera = true ;
+    health4.fixedToCamera = true ;
+    health5.fixedToCamera = true ;
 
     player.checkWorldBounds = true;
     boundsKill = player.body.collideWorldBounds;
@@ -159,13 +176,8 @@ var level = (function(){
 
     bluerays = game.add.group();
     game.physics.enable(bluerays, Phaser.Physics.ARCADE);
+    // game.physics.enable(blueray, Phaser.Physics.ARCADE);
 
-    game.physics.enable(health0, Phaser.Physics.ARCADE);
-    game.physics.enable(health1, Phaser.Physics.ARCADE);
-    game.physics.enable(health2, Phaser.Physics.ARCADE);
-    game.physics.enable(health3, Phaser.Physics.ARCADE);
-    game.physics.enable(health4, Phaser.Physics.ARCADE);
-    game.physics.enable(health5, Phaser.Physics.ARCADE);
 
   }
 
@@ -175,6 +187,8 @@ var level = (function(){
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(boss1, layer);
     game.physics.arcade.collide(boss2, layer);
+    game.physics.arcade.collide(player, layer);
+    // game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
     game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     // game.physics.arcade.collide(fireballs, player, killFlame, null, this);
@@ -184,6 +198,7 @@ var level = (function(){
     game.physics.arcade.collide(bluerays, boss2, deadBoss2, null, this);
     game.physics.arcade.collide(bluerays, emitter1, deadBoss1, null, this);
     game.physics.arcade.collide(bluerays, fireballs, fireCollide, null, this);
+    // game.physics.arcade.collide(bluerays, fireball1, fireCollide, null, this);
     // game.physics.arcade.overlap(player, layer, killPlayer, null, this);
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
 
@@ -208,10 +223,14 @@ var level = (function(){
 
     HealthBar();
 
-    // if (boss2HP <= 0 ) {
-    //   setTimeout(function() {
-    //     game.state.start('win1');
-    //   }, 3000);
+    if(player.body.x > 3900){
+      game.state.start('menu');
+    }
+
+
+    // if(bluerays.body.velocity.x < 20){
+    //   bluerays.kill();
+    //
     // }
 
     // if (boss1HP,boss2HP <= 0 ) {
@@ -225,21 +244,9 @@ var level = (function(){
   function movePlayer(){
     //Reset the players velocity (movement)
     player.body.velocity.x  = 0;
-    health0.body.velocity.x = 0;
-    health1.body.velocity.x = 0;
-    health2.body.velocity.x = 0;
-    health3.body.velocity.x = 0;
-    health4.body.velocity.x = 0;
-    health5.body.velocity.x = 0;
+
 
     if(cursors.left.isDown){
-      // healthText.body.velocity.x = -150;
-      health0.body.velocity.x    = -150;
-      health1.body.velocity.x    = -150;
-      health2.body.velocity.x    = -150;
-      health3.body.velocity.x    = -150;
-      health4.body.velocity.x    = -150;
-      health5.body.velocity.x    = -150;
       player.body.velocity.x     = -150;
       player.animations.play('left');
       player.facing = 'left';
@@ -249,13 +256,6 @@ var level = (function(){
       // player.scale.x = 1; //facing default direction
       player.scale.x = -1;
     }else if(cursors.right.isDown){
-      // healthText.velocity.x = 150;
-      health0.body.velocity.x    = 150;
-      health1.body.velocity.x    = 150;
-      health2.body.velocity.x    = 150;
-      health3.body.velocity.x    = 150;
-      health4.body.velocity.x    = 150;
-      health5.body.velocity.x    = 150;
       player.body.velocity.x     = 150;
       player.animations.play('right');
       player.facing = 'right';
@@ -278,14 +278,14 @@ var level = (function(){
   }
 
   var boss1HP  = 200;
-  var boss2HP  = 500;
+  var boss2HP  = 600;
   playerHP = 150;
 
   var shotTimerGiant = 0;
   function bossShoots(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 2000;
+      shotTimerGiant = game.time.now + 1000;
 
       fireball = fireballs.create(boss1.body.x + boss1.body.width / 2 + 45, boss1.body.y + boss1.body.height / 2 + 5, 'fireball');
 
@@ -313,7 +313,7 @@ var level = (function(){
   function bossShoots1(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 2000;
+      shotTimerGiant = game.time.now + 900;
       var fireball1;
 
       fireball1 = fireballs.create(boss2.body.x + boss2.body.width / 2 + 45, boss2.body.y + boss2.body.height / 2 + 5, 'fireball');
@@ -324,7 +324,7 @@ var level = (function(){
 
       game.physics.enable(fireball1, Phaser.Physics.ARCADE);
 
-      fireball1.body.gravity.y = 100;
+      fireball1.body.gravity.y = 90;
       fireball1.body.bounce.y = 1.3;
       fireball1.body.bounce.x = 1.3;
       fireball1.outOfBoundsKill = true;
@@ -334,7 +334,7 @@ var level = (function(){
       fireball1.body.setSize(300,450);
       // fireball.body.setSize(3,2);
 
-      fireball1.body.velocity.x = -500;
+      fireball1.body.velocity.x = -400;
 
     }
   };
@@ -343,7 +343,7 @@ var level = (function(){
   function zillaShoots(){
     // spaceKey.onDown.add(start);
       // shotTimerGiant = game.time.now + 3000;
-      var blueray;
+
       if (player.facing == 'right') {
         Zillablueray.play();
         blueray = bluerays.create(player.body.x + player.body.width / 2 + 45, player.body.y + 10, 'blueRay');
@@ -359,7 +359,10 @@ var level = (function(){
       // blueray.body.bounce.y = 1;
       blueray.outOfBoundsKill = true;
       blueray.anchor.setTo(0.5, 0.5);
-      blueray.body.velocity.x = 0;
+      // blueray.body.velocity.x = 0;
+      // if(blueray.body.velocity.x < 1 && blueray.body.velocity.x > -1){
+      //   blueray.kill();
+      // }
 
       blueray.outOfBoundsKill = true;
 
@@ -372,6 +375,10 @@ var level = (function(){
         // fireBallSound.play();
         blueray.body.velocity.x = -400;
       }
+
+      // if(blueray.body.velocity.x < 100 && blueray.body.velocity.x > -100){
+      //   blueray.kill();
+      // }
   }
 
   function killPlayer(){
@@ -380,30 +387,30 @@ var level = (function(){
     console.log('PLAYER HEALTH--->', playerHP);
     fireball.kill();
     if(playerHP <= 0){
-      game.state.start('level');
       playerHP = 150;
       boss1HP = 200;
+      game.state.start('level');
     };
   }
 
   function HealthBar(){
     if(playerHP == 125){
-      health0.kill();
+      health5.kill();
     }
     if(playerHP == 100){
-      health1.kill();
-    }
-    if(playerHP == 75){
-      health2.kill();
-    }
-    if(playerHP == 50){
-      health3.kill();
-    }
-    if(playerHP == 25){
       health4.kill();
     }
+    if(playerHP == 75){
+      health3.kill();
+    }
+    if(playerHP == 50){
+      health2.kill();
+    }
+    if(playerHP == 25){
+      health1.kill();
+    }
     if(playerHP == 0){
-      health5.kill();
+      health0.kill();
     }
   }
 
@@ -442,8 +449,6 @@ var level = (function(){
     emitter2.y = fireball.body.y;
     emitter2.start(true, 2000, null, 10);
     fireball.kill();
-
-
   }
 
   //Debugging function

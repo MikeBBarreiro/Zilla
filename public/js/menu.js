@@ -13,8 +13,10 @@ var menu = (function(){
   }
 
   var button;
+  var firstMenu = true;
 
   function create(){
+
     game.add.sprite(0, 0, 'backdrop');
     button = game.add.button(game.world.centerX - 95, 400, 'button', startClick, this, 2, 1, 0);
 
@@ -27,12 +29,17 @@ var menu = (function(){
   }
 
   function update(){
-
+    if(firstMenu == false){
+      button = game.add.button(game.world.centerX - 95, 400, 'button', startClick, this, 2, 1, 0);
+      firstMenu = true;
+    }
   }
 
 
   function startClick() {
-    this.game.state.start('level');
+    firstMenu = false;
+    button.destroy();
+    game.state.start('level');
   }
 
   return o;
