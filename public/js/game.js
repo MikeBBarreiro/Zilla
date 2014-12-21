@@ -418,7 +418,7 @@ var level = (function(){
     boss1HP -= 1;
     boss1.body.velocity.x = -20;
     boss1.body.velocity.y = 90;
-    if(boss1HP <= 0){
+    if(boss1HP == 0){
       boss1.kill();
       emitter1.x = boss1.body.x;
       emitter1.y = boss1.body.y;
