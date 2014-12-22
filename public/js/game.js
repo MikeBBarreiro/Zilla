@@ -56,6 +56,7 @@ var level = (function(){
     game.load.audio('fireball', '/assets/audio/fireball.wav');
     game.load.audio('ZillaRay', '/assets/audio/theshooting2.mp3');
     game.load.audio('GidDead',  '/assets/audio/Explosion.wav');
+    game.load.audio('heartbeat',  '/assets/audio/Hearbeat_2.wav');
     // game.load.image('ground', '/assets/ground.png');
     // game.load.image('sky', '/assets/sky.png');
     // //load jump sound effect
@@ -87,6 +88,7 @@ var level = (function(){
     fireBallSound = game.add.audio('fireball', 0.5);
     Zillablueray  = game.add.audio('ZillaRay', 0.9);
     GidDead       = game.add.audio('GidDead', 0.5);
+    heartbeat     = game.add.audio('heartbeat', 1);
 
     //Map Collision is activated here
     map.setCollisionBetween(37, 61);
@@ -176,9 +178,8 @@ var level = (function(){
 
     bluerays = game.add.group();
     game.physics.enable(bluerays, Phaser.Physics.ARCADE);
-    // game.physics.enable(blueray, Phaser.Physics.ARCADE);
 
-
+    //  game.time.events.add(Phaser.Timer.SECOND * 4, fadePicture, this);
   }
 
 
@@ -188,11 +189,12 @@ var level = (function(){
     game.physics.arcade.collide(boss1, layer);
     game.physics.arcade.collide(boss2, layer);
     game.physics.arcade.collide(player, layer);
-    // game.physics.arcade.collide(bluerays, layer);
+    game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
     game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     // game.physics.arcade.collide(fireballs, player, killFlame, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
+    // game.physics.arcade.collide(bluerays, fireballs, blueRayCollide, null, this);
     game.physics.arcade.collide(boss2, player, killPlayer, null, this);
     game.physics.arcade.collide(bluerays, boss1, deadBoss1, null, this);
     game.physics.arcade.collide(bluerays, boss2, deadBoss2, null, this);
@@ -223,7 +225,7 @@ var level = (function(){
 
     HealthBar();
 
-    if(player.body.x > 3900){
+    if(boss2HP === 0){
       game.state.start('menu');
     }
 
@@ -360,11 +362,8 @@ var level = (function(){
       blueray.outOfBoundsKill = true;
       blueray.anchor.setTo(0.5, 0.5);
       // blueray.body.velocity.x = 0;
-      // if(blueray.body.velocity.x < 1 && blueray.body.velocity.x > -1){
-      //   blueray.kill();
-      // }
 
-      blueray.outOfBoundsKill = true;
+
 
       if (player.facing == 'right'){
         Zillablueray.play();
@@ -384,7 +383,6 @@ var level = (function(){
   function killPlayer(){
     playerHP -= 25;
     healthText.text = 'Health: ' + playerHP;
-    console.log('PLAYER HEALTH--->', playerHP);
     fireball.kill();
     if(playerHP <= 0){
       playerHP = 150;
@@ -407,6 +405,7 @@ var level = (function(){
       health2.kill();
     }
     if(playerHP == 25){
+      heartbeat.play();
       health1.kill();
     }
     if(playerHP == 0){
@@ -426,7 +425,7 @@ var level = (function(){
       GidDead.play();
       // boss1.animations.play('hangHead');
     }
-    console.log('BOSS HEALTH====', boss1HP);
+    // console.log('BOSS HEALTH====', boss1HP);
   }
 
   function deadBoss2(){
@@ -441,7 +440,7 @@ var level = (function(){
       GidDead.play();
       // boss1.animations.play('hangHead');
     }
-    console.log('BOSS2 HEALTH====', boss2HP);
+    // console.log('BOSS2 HEALTH====', boss2HP);
   }
 
   function fireCollide(){
@@ -450,6 +449,19 @@ var level = (function(){
     emitter2.start(true, 2000, null, 10);
     fireball.kill();
   }
+
+  // function blueRayCollide(){
+  //   emitter2.x = blueray.body.x;
+  //   emitter2.y = blueray.body.y;
+  //   emitter2.start(true, 2000, null, 10);
+  //
+  //   blueray.kill();
+  //
+  // }
+
+  // function fadePicture() {
+  //   game.add.tween(blueray).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
+  // }
 
   //Debugging function
   function render(){
