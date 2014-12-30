@@ -26,6 +26,8 @@ var level = (function(){
       fireball,
       playerHP,
       spaceKey,
+      fireball1,
+      fireball2,
       healthText,
       boundsKill,
       facingGiant,
@@ -59,16 +61,7 @@ var level = (function(){
     game.load.audio('fireball', '/assets/audio/fireball.wav');
     game.load.audio('ZillaRay', '/assets/audio/theshooting2.mp3');
     game.load.audio('GidDead',  '/assets/audio/Explosion.wav');
-    game.load.audio('heartbeat',  '/assets/audio/Hearbeat_2.wav');
-    // game.load.image('ground', '/assets/ground.png');
-    // game.load.image('sky', '/assets/sky.png');
-    // //load jump sound effect
-    // game.load.audio('jump', 'assets/audio/flap.wav');
-    // game.load.audio('music', 'assets/audio/CatAstroPhi_shmup_normal.wav');
-    // game.load.audio('score', '/assets/audio/score.wav');
-    // game.load.spritesheet('dog', '/assets/dog.png', 32, 32);
-    // game.load.image('star', '/assets/star.png');
-    // game.load.image('diamond', '/assets/diamond.png');
+
   }
 
   function create(){
@@ -91,7 +84,6 @@ var level = (function(){
     fireBallSound = game.add.audio('fireball', 0.5);
     Zillablueray  = game.add.audio('ZillaRay', 0.9);
     GidDead       = game.add.audio('GidDead', 0.5);
-    heartbeat     = game.add.audio('heartbeat', 1);
 
     //Map Collision is activated here
     map.setCollisionBetween(37, 61);
@@ -145,11 +137,14 @@ var level = (function(){
     boss2.body.gravity.y = 30;
     boss2.body.setSize(40,80);
     boss2.anchor.setTo(0.8, 0.9);
+    boss2.outOfBoundsKill = true;
 
     boss3.body.bounce.y  = 0.1;
     boss3.body.gravity.y = 30;
     boss3.body.setSize(40,80);
     boss3.anchor.setTo(0.8, 0.9);
+    boss3.scale.setTo(3,2);
+
 
     healthText = game.add.text(10, 5, 'Health: 150', { fontSize: '22px', fill: '#4B6EEF' });
     healthText.fixedToCamera = true  ;
@@ -198,15 +193,18 @@ var level = (function(){
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
-    // game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     // game.physics.arcade.collide(fireballs, player, killFlame, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
     // game.physics.arcade.collide(bluerays, fireballs, blueRayCollide, null, this);
     game.physics.arcade.collide(boss2, player, killPlayer, null, this);
-    game.physics.arcade.collide(bluerays, boss1, deadBoss1, null, this);
+    game.physics.arcade.overlap(bluerays, boss1, deadBoss1, null, this);
     game.physics.arcade.collide(bluerays, boss2, deadBoss2, null, this);
+    game.physics.arcade.overlap(bluerays, boss3, deadBoss3, null, this);
     game.physics.arcade.collide(bluerays, emitter1, deadBoss1, null, this);
     game.physics.arcade.collide(bluerays, fireballs, fireCollide, null, this);
+
+    // game.physics.arcade.collide(bluerays, fireballs, fireCollide, null, this);
     // game.physics.arcade.collide(bluerays, fireball1, fireCollide, null, this);
     // game.physics.arcade.overlap(player, layer, killPlayer, null, this);
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
@@ -244,15 +242,11 @@ var level = (function(){
 
     HealthBar();
 
-    if(boss2HP === 0){
-      // game.state.start('menu');
+    if(boss3HP <= 0){
+      game.state.start('menu');
     }
-
-
-    // if(bluerays.body.velocity.x < 20){
-    //   bluerays.kill();
-    //
-    // }
+    console.log('BOSS HEALTH 2', boss2HP);
+    console.log('BOSS HEALTH 3', boss3HP);
 
     // if (boss1HP,boss2HP <= 0 ) {
     //   boss1.kill();
@@ -299,7 +293,8 @@ var level = (function(){
   }
 
   var boss1HP  = 200;
-  var boss2HP  = 600;
+  var boss2HP  = 210;
+  var boss3HP  = 600;
   playerHP = 150;
 
   var shotTimerGiant = 0;
@@ -334,8 +329,8 @@ var level = (function(){
   function bossShoots1(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 900;
-      var fireball1;
+      shotTimerGiant = game.time.now + 3000;
+      // var fireball1;
 
       fireball1 = fireballs.create(boss2.body.x + boss2.body.width / 2 + 45, boss2.body.y + boss2.body.height / 2 + 5, 'fireball');
 
@@ -380,15 +375,16 @@ var level = (function(){
 
     if (shotTimerGiant < game.time.now) {
       shotTimerGiant = game.time.now + 2000;
-      var fireball2;
+      // var fireball2;
       if (facingGiant === 'Boss3right') {
+        fireBallSound.play();
         fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 + 45, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
       } else {
         // fireBallSound.play();
+        fireBallSound.play();
         fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 - 40, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
       }
       game.physics.enable(fireball2, Phaser.Physics.ARCADE);
-
 
       boss3.animations.play('shoot2');
       fireball2.body.gravity.y = 90;
@@ -479,7 +475,6 @@ var level = (function(){
       health2.kill();
     }
     if(playerHP == 25){
-      heartbeat.play();
       health1.kill();
     }
     if(playerHP == 0){
@@ -523,13 +518,13 @@ var level = (function(){
     boss3.body.velocity.y = 90;
     if(boss3HP === 0){
       boss3.kill();
-      emitter1.x = boss2.body.x;
-      emitter1.y = boss2.body.y;
+      emitter1.x = boss3.body.x;
+      emitter1.y = boss3.body.y;
       emitter1.start(true, 2000, null, 10);
       GidDead.play();
-      // boss1.animations.play('hangHead');
+
     }
-    // console.log('BOSS2 HEALTH====', boss2HP);
+
   }
 
 
@@ -557,7 +552,8 @@ var level = (function(){
   function render(){
   //   player.debug = true;
   //   game.debug.body(player);
-  //   game.debug.body(boss1);
+    game.debug.body(boss3);
+    game.debug.body(boss2);
   //
   //   game.debug.spriteBounds(player);
   //   game.debug.spriteCorners(player, true, true);
