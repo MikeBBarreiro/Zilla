@@ -28,6 +28,7 @@ var level = (function(){
       spaceKey,
       healthText,
       boundsKill,
+      facingGiant,
       level1Music,
       Zillablueray,
       fireBallSound;
@@ -38,6 +39,7 @@ var level = (function(){
     game.load.spritesheet('Godzilla', '/assets/img/slice01_01_7x29.png', 141, 81);
     game.load.spritesheet('Boss1',    '/assets/img/slice01_01_8x10.png', 124, 135);
     game.load.spritesheet('Boss2',    '/assets/img/slice01_01_8x10.png', 124, 135);
+    game.load.spritesheet('Boss3',    '/assets/img/slice01_01_8x10.png', 124, 135);
     game.load.spritesheet('Shooter',  '/assets/img/other.png', 141, 81);
     game.load.image('backdrop',       '/assets/img/night.png');
     game.load.image('fireball',       '/assets/img/blueflame.png');
@@ -73,7 +75,7 @@ var level = (function(){
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     // game.add.sprite(0, 0, 'backdrop');
-    var backgroundGame = game.add.tileSprite(0, 0, game.world.width +3950, game.world.height +250, 'backdrop');
+    var backgroundGame = game.add.tileSprite(0, 0, game.world.width +4950, game.world.height +250, 'backdrop');
     //give backgound speed in x
     backgroundGame.autoScroll(-20, 0);
 
@@ -106,9 +108,10 @@ var level = (function(){
 
 
     player  = game.add.sprite(230, 455, 'Godzilla');
+    // player  = game.add.sprite(5000, 100, 'Godzilla');
     boss1   = game.add.sprite(1000, 100, 'Boss1');
     boss2   = game.add.sprite(3600, 100, 'Boss2');
-    boss3   = game.add.sprite(4000, 100, 'Boss3');
+    boss3   = game.add.sprite(5400, 100, 'Boss3');
     health0 = game.add.sprite(10, 40, 'health0');
     health1 = game.add.sprite(40, 40, 'health1');
     health2 = game.add.sprite(70, 40, 'health2');
@@ -188,10 +191,11 @@ var level = (function(){
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(boss1, layer);
     game.physics.arcade.collide(boss2, layer);
+    game.physics.arcade.collide(boss3, layer);
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
-    game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    // game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     // game.physics.arcade.collide(fireballs, player, killFlame, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
     // game.physics.arcade.collide(bluerays, fireballs, blueRayCollide, null, this);
@@ -218,6 +222,10 @@ var level = (function(){
       bossShoots1();
     }
 
+    if (boss3.alive == true){
+      bossShoots2();
+    }
+
     if(spaceKey.isDown){
       zillaShoots();
       // player.animations.play('Shooter');
@@ -226,7 +234,7 @@ var level = (function(){
     HealthBar();
 
     if(boss2HP === 0){
-      game.state.start('menu');
+      // game.state.start('menu');
     }
 
 
@@ -341,6 +349,55 @@ var level = (function(){
     }
   };
 
+  var pathCounter = 0;
+  function giantPath(){
+    if (pathCounter < 70) {
+      // giant.animations.play('walking_left');
+      boss3.body.velocity.x = - 50;
+      facingGiant = 'left';
+    } else {
+      // giant.animations.play('walking_right');
+      boss3.body.velocity.x = 50;
+      facingGiant = 'right';
+    }
+  }
+  var shotTimerGiant = 0;
+  function bossShoots2(){
+
+    if (shotTimerGiant < game.time.now) {
+      shotTimerGiant = game.time.now + 3000;
+      var fireball2;
+      if (facingGiant === 'right') {
+        fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 + 45, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
+      } else {
+        // fireBallSound.play();
+        fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 - 40, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
+      }
+      game.physics.enable(fireball2, Phaser.Physics.ARCADE);
+      fireball2.body.gravity.y = 90;
+      fireball2.body.bounce.y = 1.3;
+      fireball2.body.bounce.x = 1.3;
+      fireball2.outOfBoundsKill = true;
+      fireball2.anchor.setTo(0.5, 0.5);
+      fireball2.scale.setTo(0.2,0.1);
+      fireball2.body.setSize(300,450);
+
+      fireball2.body.velocity.x = -400;
+      // fireball2.body.setSize(30, 35);
+      // fireball2.body.gravity.y = 500;
+      // fireball2.body.bounce.y = 1;
+      // fireball2.outOfBoundsKill = true;
+      // fireball2.anchor.setTo(0.5, 0.5);
+      // fireball2.body.velocity.x = 0;
+      if (facingGiant === 'right'){
+        // fireBallSound.play();
+        fireball2.body.velocity.x = 200;
+      } else {
+        // fireBallSound.play();
+        fireball2.body.velocity.x = -200;
+      }
+    }
+  }
 
   function zillaShoots(){
     // spaceKey.onDown.add(start);
