@@ -98,9 +98,10 @@ var level = (function(){
 
 
     player  = game.add.sprite(230, 455, 'Godzilla');
+    // player  = game.add.sprite(4000, 100, 'Godzilla');
     boss1   = game.add.sprite(1000, 100, 'Boss1');
     boss2   = game.add.sprite(3600, 100, 'Boss2');
-    boss3   = game.add.sprite(5400, 100, 'Boss3');
+    boss3   = game.add.sprite(5350, 100, 'Boss3');
     health0 = game.add.sprite(10, 40, 'health0');
     health1 = game.add.sprite(40, 40, 'health1');
     health2 = game.add.sprite(70, 40, 'health2');
@@ -317,12 +318,12 @@ var level = (function(){
   function bossPath(){
     if (pathCounter < 70) {
       boss3.animations.play('Boss3left')
-      boss3.body.velocity.x = - 100;
+      boss3.body.velocity.x = - 200;
       boss3.scale.x = -1;
       facingGiant = 'Boss3left';
     } else {
       boss3.animations.play('Boss3right');
-      boss3.body.velocity.x = 100;
+      boss3.body.velocity.x = 200;
       boss3.scale.x = 1;
       facingGiant = 'Boss3right';
     }
@@ -393,6 +394,8 @@ var level = (function(){
     if(playerHP <= 0){
       playerHP = 150;
       boss1HP = 200;
+      boss2HP = 210;
+      boss3HP = 600;
       game.state.start('level');
     };
   }
