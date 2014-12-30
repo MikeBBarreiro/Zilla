@@ -40,6 +40,7 @@ var level = (function(){
     game.load.spritesheet('Boss1',    '/assets/img/slice01_01_8x10.png', 124, 135);
     game.load.spritesheet('Boss2',    '/assets/img/slice01_01_8x10.png', 124, 135);
     game.load.spritesheet('Boss3',    '/assets/img/slice01_01_8x10.png', 124, 135);
+    game.load.spritesheet('Boss3left',    '/assets/img/slice01_01_8x10left.png', 124, 135);
     game.load.spritesheet('Shooter',  '/assets/img/other.png', 141, 81);
     game.load.image('backdrop',       '/assets/img/night.png');
     game.load.image('fireball',       '/assets/img/blueflame.png');
@@ -169,9 +170,11 @@ var level = (function(){
     player.animations.add('right', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     player.animations.add('left', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], 10, false);
     boss1.animations.add('shoot', [14, 15, 00], 5, false);
-    boss1.animations.add('hangHead', [79, 80], 2, false);
-    // player.animations.add('zillaShoot', [157, 158], 5, false);
-    // player.animations.add('Shooter', [3, 4], 5, false);
+    boss2.animations.add('shoot1', [14, 15, 00], 5, false);
+    boss3.animations.add('shoot2', [14, 15, 00], 5, false);
+    // boss3.animations.add('Boss3left', [48, 49, 50, 57], 5, false);
+    boss3.animations.add('Boss3right', [0, 1, 2, 3, 4, 5, 6], 5, false);
+    boss3.animations.add('Boss3left', [0, 1, 2, 3, 4, 5, 6], 5, false);
     // player.animations.add('stop', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
 
     // spawnGiant();
@@ -209,6 +212,14 @@ var level = (function(){
     // game.physics.arcade.collide(lava, player, killPlayer, null, this);
 
     movePlayer();
+
+    //boss path
+    pathCounter +=1;
+    if (pathCounter >= 140){
+      pathCounter = 0;
+    }
+
+    bossPath();
 
     if(player.body.y > 600){
       killPlayer();
@@ -329,7 +340,7 @@ var level = (function(){
       fireball1 = fireballs.create(boss2.body.x + boss2.body.width / 2 + 45, boss2.body.y + boss2.body.height / 2 + 5, 'fireball');
 
       fireBallSound.play();
-      boss2.animations.play('shoot');
+      boss2.animations.play('shoot1');
       // fireball = fireballs.create(giant.body.x + giant.body.width / 2 - 40, giant.body.y + giant.body.height / 2 + 5, 'fireball');
 
       game.physics.enable(fireball1, Phaser.Physics.ARCADE);
@@ -350,30 +361,36 @@ var level = (function(){
   };
 
   var pathCounter = 0;
-  function giantPath(){
+  function bossPath(){
     if (pathCounter < 70) {
       // giant.animations.play('walking_left');
-      boss3.body.velocity.x = - 50;
-      facingGiant = 'left';
+      boss3.animations.play('Boss3left')
+      boss3.body.velocity.x = - 100;
+      boss3.scale.x = -1;
+      facingGiant = 'Boss3left';
     } else {
-      // giant.animations.play('walking_right');
-      boss3.body.velocity.x = 50;
-      facingGiant = 'right';
+      boss3.animations.play('Boss3right');
+      boss3.body.velocity.x = 100;
+      boss3.scale.x = 1;
+      facingGiant = 'Boss3right';
     }
   }
   var shotTimerGiant = 0;
   function bossShoots2(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 3000;
+      shotTimerGiant = game.time.now + 2000;
       var fireball2;
-      if (facingGiant === 'right') {
+      if (facingGiant === 'Boss3right') {
         fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 + 45, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
       } else {
         // fireBallSound.play();
         fireball2 = fireballs.create(boss3.body.x + boss3.body.width / 2 - 40, boss3.body.y + boss3.body.height / 2 + 5, 'fireball');
       }
       game.physics.enable(fireball2, Phaser.Physics.ARCADE);
+
+
+      boss3.animations.play('shoot2');
       fireball2.body.gravity.y = 90;
       fireball2.body.bounce.y = 1.3;
       fireball2.body.bounce.x = 1.3;
@@ -389,7 +406,7 @@ var level = (function(){
       // fireball2.outOfBoundsKill = true;
       // fireball2.anchor.setTo(0.5, 0.5);
       // fireball2.body.velocity.x = 0;
-      if (facingGiant === 'right'){
+      if (facingGiant === 'Boss3right'){
         // fireBallSound.play();
         fireball2.body.velocity.x = 200;
       } else {
@@ -474,7 +491,7 @@ var level = (function(){
     boss1HP -= 1;
     boss1.body.velocity.x = -20;
     boss1.body.velocity.y = 90;
-    if(boss1HP == 0){
+    if(boss1HP === 0){
       boss1.kill();
       emitter1.x = boss1.body.x;
       emitter1.y = boss1.body.y;
@@ -489,7 +506,7 @@ var level = (function(){
     boss2HP -= 1;
     boss2.body.velocity.x = -20;
     boss2.body.velocity.y = 90;
-    if(boss2HP <= 0){
+    if(boss2HP === 0){
       boss2.kill();
       emitter1.x = boss2.body.x;
       emitter1.y = boss2.body.y;
@@ -499,6 +516,22 @@ var level = (function(){
     }
     // console.log('BOSS2 HEALTH====', boss2HP);
   }
+
+  function deadBoss3(){
+    boss3HP -= 1;
+    boss3.body.velocity.x = -20;
+    boss3.body.velocity.y = 90;
+    if(boss3HP === 0){
+      boss3.kill();
+      emitter1.x = boss2.body.x;
+      emitter1.y = boss2.body.y;
+      emitter1.start(true, 2000, null, 10);
+      GidDead.play();
+      // boss1.animations.play('hangHead');
+    }
+    // console.log('BOSS2 HEALTH====', boss2HP);
+  }
+
 
   function fireCollide(){
     emitter2.x = fireball.body.x;
