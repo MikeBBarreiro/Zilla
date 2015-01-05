@@ -296,7 +296,7 @@ var level = (function(){
   function bossShoots1(){
 
     if (shotTimerGiant < game.time.now) {
-      shotTimerGiant = game.time.now + 3000;
+      shotTimerGiant = game.time.now + 2000;
       fireball1 = fireballs.create(boss2.body.x + boss2.body.width / 2 + 45, boss2.body.y + boss2.body.height / 2 + 5, 'fireball');
       fireBallSound.play();
       boss2.animations.play('shoot1');
