@@ -11,3 +11,6 @@ to blast your way and doge through Ghidorah's projectiles and make it to the
 end of the level facing King Ghidorah's clones. Good luck, I cant even beat my 
 own game. Very challenging and addictive.
 ```
+
+
+![Image1](https://cloud.githubusercontent.com/assets/7136454/5610837/331ba310-9483-11e4-80ae-9711d1128a12.png)
