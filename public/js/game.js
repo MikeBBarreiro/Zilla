@@ -182,7 +182,9 @@ var level = (function(){
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
-    game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    // game.physics.arcade.collide(fireballs, player);
+    // game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    game.physics.arcade.collide(player, fireballs, bounceOff, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
     game.physics.arcade.collide(boss2, player, killPlayer, null, this);
     game.physics.arcade.overlap(bluerays, boss1, deadBoss1, null, this);
@@ -225,10 +227,17 @@ var level = (function(){
     HealthBar();
 
     if(boss3HP <= 0){
-      game.state.start('menu');
+      game.state.start('win');
     }
-    console.log('BOSS HEALTH 2', boss2HP);
-    console.log('BOSS HEALTH 3', boss3HP);
+
+    function bounceOff(player, fireballs){
+      playerHP + 35;
+      if(player.body.touching.down && fireballs.body.touching.up){
+        // haha.play();
+        // playerHP += 25;
+        player.body.velocity.y = -500;
+      }
+    }
 
     // if (boss1HP,boss2HP <= 0 ) {
     //   boss1.kill();
@@ -468,18 +477,19 @@ var level = (function(){
     fireball.kill();
   }
 
+
   //Debugging function
   function render(){
   //   player.debug = true;
-  //   game.debug.body(player);
+    // game.debug.body(player);
     // game.debug.body(boss3);
     // game.debug.body(boss2);
   //
-  //   game.debug.spriteBounds(player);
-  //   game.debug.spriteCorners(player, true, true);
-  //   for (var i = 0; i < fireballs.length; i++){
-  //     game.debug.body(fireballs.children[i]);
-  //   }
+    // game.debug.spriteBounds(player);
+    // game.debug.spriteCorners(player, true, true);
+    // for (var i = 0; i < fireballs.length; i++){
+    //   game.debug.body(fireballs.children[i]);
+    // }
   //
   // for (var i = 0; i < bluerays.length; i++){
   //   game.debug.body(bluerays.children[i]);
