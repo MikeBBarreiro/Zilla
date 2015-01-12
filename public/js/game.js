@@ -182,17 +182,15 @@ var level = (function(){
     game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(bluerays, layer);
     game.physics.arcade.collide(fireballs, layer);
-    // game.physics.arcade.collide(fireballs, player);
-    game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
-    // game.physics.arcade.collide(fireballs, player, bounceOff, null, this);
     game.physics.arcade.collide(boss1, player, killPlayer, null, this);
     game.physics.arcade.collide(boss2, player, killPlayer, null, this);
     game.physics.arcade.overlap(bluerays, boss1, deadBoss1, null, this);
     game.physics.arcade.collide(bluerays, boss2, deadBoss2, null, this);
     game.physics.arcade.overlap(bluerays, boss3, deadBoss3, null, this);
     game.physics.arcade.collide(bluerays, emitter1, deadBoss1, null, this);
+    // game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     game.physics.arcade.collide(bluerays, fireballs, fireCollide, null, this);
-
+    // game.physics.arcade.collide(fireballs, player, bounceOff, null, this);
     movePlayer();
 
     //boss path
@@ -221,36 +219,20 @@ var level = (function(){
 
     if(spaceKey.isDown){
       zillaShoots();
-      // player.animations.play('Shooter');
     }
 
     HealthBar();
 
-    // if(boss3HP <= 0){
-    //   game.state.start('win');
-    // }
-
-    function bounceOff(){
-      // playerHP + 35;
-      if(player.body.touching.down && fireballs.body.touching.up){
-        playerHP + 35;
-        // haha.play();
-        // playerHP += 25;
-        player.body.velocity.y = -500;
-      }
-    }
-
-    // if (giantHP <= 0 ) {
-    //   giant.kill();
-    //   setTimeout(function() {
-    //     game.state.start('win1');
-    //     level1Music.stop();
-    //   }, 3000);
+    // function bounceOff(){
+    //   if(player.body.touching.down && fireballs.body.touching.up){
+    //     playerHP + 35;
+    //     player.body.velocity.y = -500;
+    //   }
     // }
 
     if (boss3HP <= 0 ) {
       // boss1.kill();
-      setTimeout(function() {
+      setTimeout(function(){
         game.state.start('win');
       }, 1000);
     }

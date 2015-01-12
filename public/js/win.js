@@ -14,6 +14,7 @@ var win = (function(){
 
   var button2,
       backdrop,
+      Roar,
       winner;
 
   function create(){
@@ -32,7 +33,6 @@ var win = (function(){
     winner = game.add.text(255, 400, 'restart the page to play', { fontSize: '32px', fill: '#4B6EEF' });
 
     Roar.play();
-    // level1Music.play();
 
   }
 
