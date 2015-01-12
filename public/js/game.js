@@ -188,7 +188,7 @@ var level = (function(){
     game.physics.arcade.collide(bluerays, boss2, deadBoss2, null, this);
     game.physics.arcade.overlap(bluerays, boss3, deadBoss3, null, this);
     game.physics.arcade.collide(bluerays, emitter1, deadBoss1, null, this);
-    // game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
+    game.physics.arcade.collide(fireballs, player, killPlayer, null, this);
     game.physics.arcade.collide(bluerays, fireballs, fireCollide, null, this);
     // game.physics.arcade.collide(fireballs, player, bounceOff, null, this);
     movePlayer();
